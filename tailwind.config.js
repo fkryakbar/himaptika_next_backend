@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+    daisyui: {
+        themes: false,
+      },
     content: [
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
