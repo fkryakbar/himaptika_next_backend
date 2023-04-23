@@ -38,7 +38,10 @@ class ApiController extends Controller
         if ($request->limit) {
             $posts = PostsModel::limit((int)$request->limit)->latest()->get();
         }
-        return response()->json($this->payload($posts));
+        if (count($posts) > 0) {
+            return response()->json($this->payload($posts));
+        }
+        return response()->json($this->payload([], 401, 'Post Not found'));
     }
 
     public function get_random_posts()
