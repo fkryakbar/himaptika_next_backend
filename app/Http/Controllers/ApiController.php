@@ -67,7 +67,10 @@ class ApiController extends Controller
     public function comments($slug)
     {
         $comments = CommentsModel::where('post_slug', $slug)->latest()->paginate(10);
-        return response()->json($this->payload($comments));
+        if (count($comments) > 0) {
+            return response()->json($this->payload($comments));
+        }
+        return response()->json($this->payload([], 404, 'Comments Not Found'));
     }
 
     public function post_comment(Request $request, $slug)
@@ -89,7 +92,10 @@ class ApiController extends Controller
     public function get_announcements()
     {
         $announcements = AnnouncementModel::latest()->get();
-        return response()->json($this->payload($announcements));
+        if (count($announcements) > 0) {
+            return response()->json($this->payload($announcements));
+        }
+        return response()->json($this->payload([], 404, 'Announcement Not Found'));
     }
 
     private function curl($url)
