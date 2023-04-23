@@ -20,7 +20,6 @@ class ApiController extends Controller
 
     private function add_assets_url($posts)
     {
-        var_dump(count($posts));
         if (count($posts) > 0) {
             foreach ($posts as $post) {
                 $post->image_path = env('APP_URL') . '/' . $post->image_path;
