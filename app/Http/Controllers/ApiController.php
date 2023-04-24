@@ -125,4 +125,16 @@ class ApiController extends Controller
             ]
         ]);
     }
+
+    public function views(Request $request, $slug)
+    {
+        $post = PostsModel::where('slug', $slug)->first();
+        if ($request->number && $post) {
+            $view = (int) $post->views + (int) $request->number;
+            $request->merge(['views' => $view]);
+            $post->update($request->except(['_token', 'number']));
+            return response()->json($this->payload([$post], 200, 'berhasil menambahkan view'));
+        }
+        return response()->json($this->payload([], 404, 'Menambahkan view gagal'));
+    }
 }

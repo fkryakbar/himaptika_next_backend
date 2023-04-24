@@ -23,4 +23,5 @@ Route::prefix('v1')->group(function () {
     Route::post('comments/{slug}', [ApiController::class, 'post_comment']);
     Route::get('announcements', [ApiController::class, 'get_announcements']);
     Route::get('youtube_link', [ApiController::class, 'get_youtube_link']);
+    Route::post('views/{slug}', [ApiController::class, 'views']);
 });
