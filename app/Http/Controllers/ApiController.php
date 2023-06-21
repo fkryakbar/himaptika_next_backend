@@ -32,7 +32,7 @@ class ApiController extends Controller
 
     public function all_posts()
     {
-        $posts = PostsModel::all();
+        $posts = PostsModel::all(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at']);
         return response()->json($this->payload($posts));
     }
 
