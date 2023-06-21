@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
+
     private function payload($data, $code = 200, $message = 'success')
     {
         return [
@@ -27,6 +28,12 @@ class ApiController extends Controller
             return $posts;
         }
         return [];
+    }
+
+    public function all_posts()
+    {
+        $posts = PostsModel::all();
+        return response()->json($this->payload($posts));
     }
 
     public function get_posts(Request $request)
