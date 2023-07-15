@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::get('posts', [ApiController::class, 'get_posts']);
+    Route::get('posts/slug', [ApiController::class, 'get_slug']);
     Route::get('all-posts', [ApiController::class, 'all_posts']);
     Route::get('random-posts', [ApiController::class, 'get_random_posts']);
     Route::get('read-post/{slug}', [ApiController::class, 'read_post']);
