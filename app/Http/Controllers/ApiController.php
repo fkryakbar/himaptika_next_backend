@@ -37,7 +37,10 @@ class ApiController extends Controller
     }
     public function get_slug(Request $request)
     {
-        $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('title', 'LIKE', '%' . $request->search . '%')->orWhere('content', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->latest()->paginate(10);
+        $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('title', 'LIKE', '%' . $request->search . '%')->orWhere('content', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->latest()->get();
+        if ($request->paginate) {
+            $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('title', 'LIKE', '%' . $request->search . '%')->orWhere('content', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->latest()->paginate((int)$request->paginate);
+        }
         if ($request->limit) {
             $posts = PostsModel::limit((int)$request->limit)->latest()->get(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at']);
         }
