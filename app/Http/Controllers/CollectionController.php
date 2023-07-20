@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class CollectionController extends Controller
 {
-    public function post_slug($collection)
+    public function post_slug($collection, Request $request)
     {
-        $posts = PostsModel::where('collection', $collection)->latest()->get(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at']);
+        $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('collection', $collection)->latest()->get();
+        if ($request->limit) {
+            $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('collection', $collection)->limit((int)$request->limit)->latest()->get();
+        }
+        if ($request->paginate) {
+            $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('collection', $collection)->latest()->paginate((int)$request->paginate);
+        }
         return response([
             'message' => 'Success',
             'data' => $posts
