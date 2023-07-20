@@ -107,7 +107,7 @@ class ApiController extends Controller
 
     public function comments($slug)
     {
-        $comments = CommentsModel::where('post_slug', $slug)->where('collection', 'himaptika')->latest()->paginate(10);
+        $comments = CommentsModel::where('post_slug', $slug)->latest()->paginate(10);
         if (count($comments) > 0) {
             return response()->json($this->payload($comments));
         }
