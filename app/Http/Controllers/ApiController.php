@@ -32,29 +32,52 @@ class ApiController extends Controller
 
     public function all_posts()
     {
-        $posts = PostsModel::all(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at']);
+        $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])
+            ->where('collection', 'himaptika')
+            ->get();
         return response()->json($this->payload($posts));
     }
     public function get_slug(Request $request)
     {
-        $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('title', 'LIKE', '%' . $request->search . '%')->orWhere('content', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->latest()->get();
+        $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])
+            ->where(function ($query) use ($request) {
+                $searchTerm = '%' . $request->search . '%';
+                $query->where('title', 'LIKE', $searchTerm)
+                    ->orWhere('content', 'LIKE', $searchTerm)
+                    ->orWhere('description', 'LIKE', $searchTerm);
+            })
+            ->where('collection', 'himaptika')->latest()->get();
         if ($request->paginate) {
-            $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])->where('title', 'LIKE', '%' . $request->search . '%')->orWhere('content', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->latest()->paginate((int)$request->paginate);
+            $posts = PostsModel::select(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at'])
+                ->where(function ($query) use ($request) {
+                    $searchTerm = '%' . $request->search . '%';
+                    $query->where('title', 'LIKE', $searchTerm)
+                        ->orWhere('content', 'LIKE', $searchTerm)
+                        ->orWhere('description', 'LIKE', $searchTerm);
+                })
+                ->where('collection', 'himaptika')
+                ->latest()
+                ->paginate((int)$request->paginate);
         }
         if ($request->limit) {
-            $posts = PostsModel::limit((int)$request->limit)->latest()->get(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at']);
+            $posts = PostsModel::where('collection', 'himaptika')->limit((int)$request->limit)->latest()->get(['id', 'title', 'slug', 'description', 'image_path', 'views', 'created_at', 'updated_at']);
         }
         return response()->json($this->payload($posts));
     }
 
     public function get_posts(Request $request)
     {
-        $posts = PostsModel::latest()->paginate(10);
+        $posts = PostsModel::where('collection', 'himaptika')->latest()->paginate(10);
         if ($request->search) {
-            $posts = PostsModel::where('title', 'LIKE', '%' . $request->search . '%')->orWhere('content', 'LIKE', '%' . $request->search . '%')->orWhere('description', 'LIKE', '%' . $request->search . '%')->latest()->paginate(10);
+            $posts = PostsModel::where(function ($query) use ($request) {
+                $searchTerm = '%' . $request->search . '%';
+                $query->where('title', 'LIKE', $searchTerm)
+                    ->orWhere('content', 'LIKE', $searchTerm)
+                    ->orWhere('description', 'LIKE', $searchTerm);
+            })->where('collection', 'himaptika')->latest()->paginate(10);
         }
         if ($request->limit) {
-            $posts = PostsModel::limit((int)$request->limit)->latest()->get();
+            $posts = PostsModel::where('collection', 'himaptika')->limit((int)$request->limit)->latest()->get();
         }
         if (count($posts) > 0) {
             return response()->json($this->payload($posts));
@@ -64,13 +87,13 @@ class ApiController extends Controller
 
     public function get_random_posts()
     {
-        $posts = PostsModel::inRandomOrder()->limit(5)->latest()->get();
+        $posts = PostsModel::where('collection', 'himaptika')->inRandomOrder()->limit(5)->latest()->get();
         return response()->json($this->payload($posts));
     }
 
     public function read_post($slug)
     {
-        $post = PostsModel::where('slug', $slug)->first();
+        $post = PostsModel::where('slug', $slug)->where('collection', 'himaptika')->first();
         if (!$post) {
             return response()->json($this->payload([], 401, 'Not Found'));
         }
@@ -84,7 +107,7 @@ class ApiController extends Controller
 
     public function comments($slug)
     {
-        $comments = CommentsModel::where('post_slug', $slug)->latest()->paginate(10);
+        $comments = CommentsModel::where('post_slug', $slug)->where('collection', 'himaptika')->latest()->paginate(10);
         if (count($comments) > 0) {
             return response()->json($this->payload($comments));
         }
@@ -93,7 +116,7 @@ class ApiController extends Controller
 
     public function post_comment(Request $request, $slug)
     {
-        if (!PostsModel::where('slug', $slug)->first()) {
+        if (!PostsModel::where('slug', $slug)->where('collection', 'himaptika')->first()) {
             return response()->json($this->payload([], 403, 'Post Not Found'));
         }
         if ($request->email && $request->name && $request->comment && $slug) {
@@ -146,7 +169,7 @@ class ApiController extends Controller
 
     public function views(Request $request, $slug)
     {
-        $post = PostsModel::where('slug', $slug)->first();
+        $post = PostsModel::where('slug', $slug)->where('collection', 'himaptika')->first();
         if ($request->number && $post) {
             $view = (int) $post->views + (int) $request->number;
             $request->merge(['views' => $view]);

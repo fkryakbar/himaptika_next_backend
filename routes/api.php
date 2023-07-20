@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\CollectionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,4 +27,10 @@ Route::prefix('v1')->group(function () {
     Route::get('announcements', [ApiController::class, 'get_announcements']);
     Route::get('youtube_link', [ApiController::class, 'get_youtube_link']);
     Route::post('views/{slug}', [ApiController::class, 'views']);
+});
+
+Route::middleware(['public.collection'])->prefix('v1/collection')->group(function () {
+    Route::get('{collection}/slug', [CollectionController::class, 'post_slug']);
+    Route::get('{collection}/read/{slug}', [CollectionController::class, 'read_post']);
+    Route::post('{collection}/views/{slug}', [CollectionController::class, 'add_views']);
 });
