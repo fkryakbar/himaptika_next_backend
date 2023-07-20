@@ -27,6 +27,13 @@
                         </label>
                         <textarea class="textarea textarea-bordered h-24" name="description">{{ $post->description }}</textarea>
                     </div>
+                    <div class="form-control w-full">
+                        <label class="label">
+                            <span class="label-text">Collection (Optional - Default : himaptika)</span>
+                        </label>
+                        <input type="text" name="collection" placeholder="Type here" class="input input-bordered w-full"
+                            value="{{ $post->collection }}" />
+                    </div>
                     <div class="form-control w-full max-w-xs mt-3">
                         <label class="label">
                             <span class="label-text">Selected Image : </span>
